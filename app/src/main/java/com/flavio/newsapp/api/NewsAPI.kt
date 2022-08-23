@@ -1,7 +1,7 @@
 package com.flavio.newsapp.api
 
 import com.flavio.newsapp.util.Constants.Companion.API_KEY
-import com.flavio.newsapp.NewsResponse
+import com.flavio.newsapp.models.NewsResponse
 import retrofit2.http.Query
 import retrofit2.http.GET
 import retrofit2.Response

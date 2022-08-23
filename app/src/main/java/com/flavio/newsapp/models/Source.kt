@@ -1,4 +1,4 @@
-package com.flavio.newsapp
+package com.flavio.newsapp.models
 
 data class Source(
     val id: String,
