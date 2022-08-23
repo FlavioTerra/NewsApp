@@ -2,7 +2,7 @@ package com.flavio.newsapp.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.flavio.newsapp.Article
+import com.flavio.newsapp.models.Article
 
 @Dao
 interface ArticleDao {

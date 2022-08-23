@@ -1,4 +1,4 @@
-package com.flavio.newsapp
+package com.flavio.newsapp.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
