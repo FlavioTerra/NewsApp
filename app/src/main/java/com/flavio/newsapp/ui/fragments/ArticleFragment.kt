@@ -8,6 +8,7 @@ import androidx.navigation.fragment.navArgs
 import com.flavio.newsapp.R
 import com.flavio.newsapp.ui.NewsActivity
 import com.flavio.newsapp.ui.NewsViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_article.*
 
 class ArticleFragment : Fragment(R.layout.fragment_article){
@@ -24,6 +25,10 @@ class ArticleFragment : Fragment(R.layout.fragment_article){
             webViewClient = WebViewClient()
             loadUrl(article.url)
         }
-    }
 
+        fab.setOnClickListener {
+            viewModel.saveArticle(article)
+            Snackbar.make(view, "Article saved successfully", Snackbar.LENGTH_SHORT).show()
+        }
+    }
 }

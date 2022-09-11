@@ -3,6 +3,7 @@ package com.flavio.newsapp.ui
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flavio.newsapp.models.Article
 import com.flavio.newsapp.models.NewsResponse
 import com.flavio.newsapp.repository.NewsRepository
 import com.flavio.newsapp.util.Resource
@@ -51,6 +52,16 @@ class NewsViewModel(
             }
         }
         return Resource.Error(response.message())
+    }
+
+    fun saveArticle(article: Article) = viewModelScope.launch {
+        newsRepository.upsert(article)
+    }
+
+    fun getSavedNews() = newsRepository.getSavedNews()
+
+    fun deleteArticle(article: Article) = viewModelScope.launch {
+        newsRepository.deleteArticle(article)
     }
 
 }
