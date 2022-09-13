@@ -1,4 +1,5 @@
 package com.flavio.newsapp
 
-class NewsApplication {
-}
+import android.app.Application
+
+class NewsApplication : Application()
