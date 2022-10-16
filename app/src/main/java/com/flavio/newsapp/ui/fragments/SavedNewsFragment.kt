@@ -1,7 +1,9 @@
 package com.flavio.newsapp.ui.fragments
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -10,15 +12,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flavio.newsapp.R
 import com.flavio.newsapp.adapters.NewsAdapter
+import com.flavio.newsapp.databinding.FragmentSavedNewsBinding
 import com.flavio.newsapp.ui.NewsActivity
 import com.flavio.newsapp.ui.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_saved_news.*
 
 class SavedNewsFragment : Fragment(R.layout.fragment_saved_news){
 
+    private var _binding: FragmentSavedNewsBinding? = null
+    private val binding: FragmentSavedNewsBinding get() = _binding!!
+
     lateinit var viewModel: NewsViewModel
     lateinit var newsAdapter: NewsAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSavedNewsBinding
+            .inflate(
+                inflater,
+                container,
+                false
+            )
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,7 +55,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news){
         }
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         ) {
             override fun onMove(
@@ -47,8 +66,8 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news){
                 val position = viewHolder.adapterPosition
                 val article = newsAdapter.differ.currentList[position]
                 viewModel.deleteArticle(article)
-                Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_SHORT).apply {
-                    setAction("Undo") {
+                Snackbar.make(view, getString(R.string.success_delete_article), Snackbar.LENGTH_SHORT).apply {
+                    setAction(getString(R.string.undo)) {
                         viewModel.saveArticle(article)
                     }
                     show()
@@ -57,7 +76,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news){
         }
 
         ItemTouchHelper(itemTouchHelperCallback).apply {
-            attachToRecyclerView(rvSavedNews)
+            attachToRecyclerView(binding.rvSavedNews)
         }
 
         viewModel.getSavedNews().observe(viewLifecycleOwner, Observer { articles ->
@@ -67,9 +86,14 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news){
 
     private fun setupRecyclerView() {
         newsAdapter = NewsAdapter()
-        rvSavedNews.apply {
+        binding.rvSavedNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
