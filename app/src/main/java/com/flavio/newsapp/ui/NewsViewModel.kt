@@ -10,9 +10,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.flavio.newsapp.NewsApplication
+import com.flavio.newsapp.R
 import com.flavio.newsapp.models.Article
 import com.flavio.newsapp.models.NewsResponse
 import com.flavio.newsapp.repository.NewsRepository
+import com.flavio.newsapp.util.Constants.Companion.SEARCH_NEWS_COUNTRY
 import com.flavio.newsapp.util.Constants.Companion.SEARCH_NEWS_LANGUAGE
 import com.flavio.newsapp.util.Resource
 import kotlinx.coroutines.launch
@@ -33,7 +35,7 @@ class NewsViewModel(
     var searchNewsResponse: NewsResponse? = null
 
     init {
-        getBreakingNews("br")
+        getBreakingNews(SEARCH_NEWS_COUNTRY)
     }
 
     fun getBreakingNews(countryCode: String) = viewModelScope.launch {
@@ -91,16 +93,16 @@ class NewsViewModel(
     private suspend fun safeBreakingNewsCall(countryCode: String) {
         breakingNews.postValue(Resource.Loading())
         try {
-            if (hasIternetConnection()) {
+            if (hasInternetConnection()) {
                 val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
                 breakingNews.postValue(handleBreakingNewsResponse(response))
             } else {
-                breakingNews.postValue(Resource.Error("No internet connection"))
+                breakingNews.postValue(Resource.Error(app.getString(R.string.no_connection_error)))
             }
         } catch (t: Throwable) {
             when (t) {
-                is IOException -> breakingNews.postValue(Resource.Error("Network Failure"))
-                else -> breakingNews.postValue(Resource.Error("Conversion Error"))
+                is IOException -> breakingNews.postValue(Resource.Error(app.getString(R.string.network_error)))
+                else -> breakingNews.postValue(Resource.Error(app.getString(R.string.conversion_error)))
             }
         }
     }
@@ -108,21 +110,21 @@ class NewsViewModel(
     private suspend fun safeSearchNewsCall(searchQuery: String) {
         searchNews.postValue(Resource.Loading())
         try {
-            if (hasIternetConnection()) {
+            if (hasInternetConnection()) {
                 val response = newsRepository.searchNews(searchQuery, SEARCH_NEWS_LANGUAGE, searchNewsPage)
                 searchNews.postValue(handleSearchNewsResponse(response))
             } else {
-                searchNews.postValue(Resource.Error("No internet connection"))
+                searchNews.postValue(Resource.Error(app.getString(R.string.no_connection_error)))
             }
         } catch (t: Throwable) {
             when (t) {
-                is IOException -> searchNews.postValue(Resource.Error("Network Failure"))
-                else -> searchNews.postValue(Resource.Error("Conversion Error"))
+                is IOException -> searchNews.postValue(Resource.Error(app.getString(R.string.network_error)))
+                else -> searchNews.postValue(Resource.Error(app.getString(R.string.conversion_error)))
             }
         }
     }
 
-    private fun hasIternetConnection(): Boolean {
+    private fun hasInternetConnection(): Boolean {
         val connectivityManager = getApplication<NewsApplication>().getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager

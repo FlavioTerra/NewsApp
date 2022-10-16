@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">NewsApp</string>
+
+    <!-- All  -->
+    <string name="hint_search">Search…</string>
+    <string name="success_delete_article">Successfully deleted article</string>
+    <string name="success_save_article">Article saved successfully</string>
+    <string name="undo">Undo</string>
+
+    <!-- Navigation Menu  -->
+    <string name="breaking_news_menu">Breaking News</string>
+    <string name="saved_news_menu">Saved News</string>
+    <string name="search_news_menu">Search News</string>
+
+    <!-- Error Messages  -->
+    <string name="unknown_error">An error occurred: {0}</string>
+    <string name="no_connection_error">No internet connection</string>
+    <string name="network_error">Network Failure</string>
+    <string name="conversion_error">Conversion Error</string>
+
 </resources>

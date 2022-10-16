@@ -1,7 +1,9 @@
 package com.flavio.newsapp.ui.fragments
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -11,18 +13,35 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flavio.newsapp.R
 import com.flavio.newsapp.adapters.NewsAdapter
+import com.flavio.newsapp.databinding.FragmentBreakingNewsBinding
 import com.flavio.newsapp.ui.NewsActivity
 import com.flavio.newsapp.ui.NewsViewModel
 import com.flavio.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
+import com.flavio.newsapp.util.Constants.Companion.SEARCH_NEWS_COUNTRY
 import com.flavio.newsapp.util.Resource
-import kotlinx.android.synthetic.main.fragment_breaking_news.*
+import java.text.MessageFormat.format
 
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news){
+
+    private var _binding: FragmentBreakingNewsBinding? = null
+    private val binding: FragmentBreakingNewsBinding get() = _binding!!
 
     lateinit var viewModel: NewsViewModel
     lateinit var newsAdapter: NewsAdapter
 
-    val TAG = "BreakingNewsFragment"
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentBreakingNewsBinding
+            .inflate(
+                inflater,
+                container,
+                false
+            )
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,14 +67,14 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news){
                         val totalPages = newsResponse.totalResults / QUERY_PAGE_SIZE + 2
                         isLastPage = viewModel.breakingNewsPage == totalPages
                         if (isLastPage) {
-                            rvBreakingNews.setPadding(0, 0, 0, 0)
+                            binding.rvBreakingNews.setPadding(0, 0, 0, 0)
                         }
                     }
                 }
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Toast.makeText(activity, "An error occured: $message", Toast.LENGTH_LONG).show()
+                        Toast.makeText(activity, format(getString(R.string.unknown_error), message), Toast.LENGTH_LONG).show()
                     }
                 }
                 is Resource.Loading -> {
@@ -66,12 +85,12 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news){
     }
 
     private fun hideProgressBar() {
-        paginationProgressBar.visibility = View.INVISIBLE
+        binding.paginationProgressBar.visibility = View.INVISIBLE
         isLoading = false
     }
 
     private fun showProgressBar() {
-        paginationProgressBar.visibility = View.VISIBLE
+        binding.paginationProgressBar.visibility = View.VISIBLE
         isLoading = true
     }
 
@@ -101,7 +120,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news){
             val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
             val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
             if (shouldPaginate) {
-                viewModel.getBreakingNews("br")
+                viewModel.getBreakingNews(SEARCH_NEWS_COUNTRY)
                 isScrolling = false
             }
         }
@@ -109,10 +128,15 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news){
 
     private fun setupRecyclerView() {
         newsAdapter = NewsAdapter()
-        rvBreakingNews.apply {
+        binding.rvBreakingNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
             addOnScrollListener(this@BreakingNewsFragment.scrollListener)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
